@@ -73,27 +73,52 @@
 (use-package emacs :elpaca nil :config (setq ring-bell-function #'ignore))
 
 ;; Don't install anything. Defer execution of BODY
-(elpaca nil (message "deferred"))
+;; (elpaca nil (message "deferred"))
 
 (use-package general
-  :config
-  (general-evil-setup)
+    :config
+    (general-evil-setup)
 
-  ;; set up 'SPC' as the global leader key
-  (general-create-definer dt/leader-keys
-    :states '(normal insert visual emacs)
-    :keymaps 'override
-    :prefix "SPC" ;; set leader
-    :global-prefix "M-SPC") ;; access leader in insert mode
+;; set up 'SPC' as the global leader key
+(general-create-definer dt/leader-keys
+:states '(normal insert visual emacs)
+:keymaps 'override
+:prefix "SPC" ;; set leader
+:global-prefix "M-SPC") ;; access leader in insert mode
 
   (dt/leader-keys
     "b" '(:ignore t :wk "buffer")
-    "bb" '(switch-to-buffer :wk "Switch buffer")
-    "bk" '(kill-this-buffer :wk "Kill this buffer")
-    "bn" '(next-buffer :wk "Next buffer")
-    "bp" '(previous-buffer :wk "Previous buffer")
-    "br" '(revert-buffer :wk "Reload buffer"))
+    "b i" '(ibuffer :wk "ibuffer")
+    "b b" '(switch-to-buffer :wk "Switch buffer")
+    "b k" '(kill-this-buffer :wk "Kill this buffer")
+    "b n" '(next-buffer :wk "Next buffer")
+    "b p" '(previous-buffer :wk "Previous buffer")
+    "b r" '(revert-buffer :wk "Reload buffer"))
 
+  (dt/leader-keys
+    "e" '(:ignore t :wk "Evaluate")    
+    "e b" '(eval-buffer :wk "Evaluate elisp in buffer")
+    "e d" '(eval-defun :wk "Evaluate defun containing or after point")
+    "e e" '(eval-expression :wk "Evaluate and elisp expression")
+    "e l" '(eval-last-sexp :wk "Evaluate elisp expression before point")
+    "e r" '(eval-region :wk "Evaluate elisp in region")) 
+
+  (dt/leader-keys
+    "." '(find-file :wk "Find file")
+    "f c" '((lambda () (interactive) (find-file "~/.config/emacs/config.org")) :wk "Edit emacs config")
+    "TAB TAB" '(comment-line :wk "Comment lines"))
+
+   (dt/leader-keys
+     "h" '(:ignore t :wk "Help")
+     "h f" '(describe-function :wk "Describe function")
+     "h v" '(describe-variable :wk "Describe variable")
+     ;; "h r r" '((lambda () (interactive) (load-file "~/.config/emacs/init.el")) :wk "Reload emacs config"))
+     "h r r" '(reload-init-file :wk "Reload emacs config"))
+
+   (dt/leader-keys
+     "t" '(:ignore t :wk "Toggle")
+     "t l" '(display-line-numbers-mode :wk "Toggle line numbers")
+     "t t" '(visual-line-mode :wk "Toggle truncated lines"))
 )
 
 (set-face-attribute 'default nil
@@ -123,6 +148,11 @@
 
 ;; Uncomment the following line if line spacing needs adjusting.
 (setq-default line-spacing 0.12)
+
+(global-set-key (kbd "C-=") 'text-scale-increase)
+(global-set-key (kbd "C--") 'text-scale-decrease)
+(global-set-key (kbd "<C-wheel-up>") 'text-scale-increase)
+(global-set-key (kbd "<C-wheel-down>") 'text-scale-decrease)
 
 (menu-bar-mode -1)
 (tool-bar-mode -1)
@@ -155,3 +185,18 @@
 (add-hook 'org-mode-hook 'org-indent-mode)
 (use-package org-bullets)
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+
+(electric-indent-mode -1)
+
+(require 'org-tempo)
+
+(defun reload-init-file ()
+  (interactive)
+  (load-file user-init-file)
+  (load-file user-init-file))
+
+(use-package sudo-edit
+  :config
+    (dt/leader-keys
+      "fu" '(sudo-edit-find-file :wk "Sudo find file")
+      "fU" '(sudo-edit :wk "Sudo edit file")))

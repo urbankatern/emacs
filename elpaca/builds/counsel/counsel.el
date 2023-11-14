@@ -1,0 +1,1 @@
+/home/urban/.config/emacs/elpaca/repos/swiper/counsel.el
